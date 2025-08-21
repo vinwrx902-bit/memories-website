@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memories for you</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      margin: 0;
+      background: #93ad6d; /* default home background */
+      color: #333;
+      text-align: center;
+      transition: background 0.5s ease;
+    }
+
+    #home {
+      margin-top: 150px;
+      padding: 20px;
+    }
+
+    header {
+      background: #ffb6c1;
+      padding: 15px 0;
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 40px;
+    }
+.emoji-link {
+  text-decoration: none;
+  display: inline-block;      /* allows transform to work */
+  transition: transform 0.2s ease;
+}
+
+.emoji-link:hover {
+  transform: scale(1.3);      /* grows emoji on hover */
+}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      padding: 0 40px;
+    }
+
+    .collage {
+      position: relative;
+      cursor: pointer;
+      border-radius: 20px;
+      transition: transform 0.3s;
+    }
+
+    .collage:hover {
+      transform: scale(1.05);
+    }
+
+    .collage-title {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 15px;
+      font-size: 1.5em;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .scrapbook {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+
+    .scrapbook .photo {
+      position: absolute;
+      width: 80%;
+      height: 80%;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .photo1 { top: 0; left: 40px; transform: rotate(-8deg); z-index: 3; }
+    .photo2 { top: 5px; left: 80px; transform: rotate(5deg); z-index: 2; }
+    .photo3 { top: 10px; left: 60px; transform: rotate(0deg); z-index: 1; }
+
+    .scrapbook-gallery {
+      position: relative;
+      width: 100%;
+      height: 600px;
+      margin: 0 auto;
+    }
+
+    .scrapbook-gallery .photo {
+      position: absolute;
+      width: 200px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .scrapbook-gallery .photo:hover {
+      transform: scale(1.15) rotate(0deg);
+      z-index: 999; /* bring hovered photo to the front */
+      transition: transform 0.3s ease, z-index 0s;
+    }
+
+    /* Your custom positions remain unchanged */
+    .photo-g1  { top: 20px;  left: 40px;  transform: rotate(-15deg); z-index: 2; }
+    .photo-g2  { top: 250px; left: 100px; transform: rotate(10deg);  z-index: 4; }
+    .photo-g3  { top: 100px; left: 300px; transform: rotate(-8deg);  z-index: 3; }
+    .photo-g4  { top: 400px; left: 50px;  transform: rotate(12deg);  z-index: 5; }
+    .photo-g5  { top: 320px; left: 250px; transform: rotate(-20deg); z-index: 1; }
+    .photo-g6  { top: 150px; left: 450px; transform: rotate(18deg);  z-index: 6; }
+    .photo-g7  { top: 30px;  left: 600px; transform: rotate(-12deg); z-index: 3; }
+    .photo-g8  { top: 350px; left: 550px; transform: rotate(15deg);  z-index: 4; }
+    .photo-g9  { top: 70px;  left: 750px; transform: rotate(-10deg); z-index: 2; }
+    .photo-g10 { top: 300px; left: 850px; transform: rotate(20deg);  z-index: 5; }
+    .photo-g11 { top: 200px; left: 950px; transform: rotate(-5deg);  z-index: 3; }
+    .photo-g12 { top: 50px;  left: 1050px; transform: rotate(8deg);  z-index: 4; }
+    .photo-g13 { top: 150px; left: 1250px; transform: rotate(-6deg);  z-index: 2; }
+    .photo-g14 { top: 310px; left: 1120px; transform: rotate(10deg);  z-index: 3; }
+    .photo-g15 { top: 440px; left: 900px; transform: rotate(-12deg); z-index: 4; }
+    .photo-g16 { top: 340px; left: 1300px; transform: rotate(-8deg);  z-index: 2; }
+    .photo-g17 { top: 460px; left: 1100px; transform: rotate(-12deg); z-index: 4; }
+    .photo-g18 { top: 450px; left: 380px; transform: rotate(-5deg); z-index: 4; }
+    .photo-g19 { top: 200px; left: 650px; transform: rotate(-5deg);  z-index: 3; }
+
+    .back-link {
+      display: inline-block;
+      margin: 20px;
+      padding: 12px 25px;
+      background: #ffb6c1;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 1.1em;
+    }
+
+    .back-link:hover {
+      background: #ff8da1;
+    }
+
+    /* ---- Lightbox styles ---- */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .lightbox:target {
+      display: flex;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 40px;
+      font-size: 2em;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sound effects -->
+  <audio id="click-sound" src="sounds/click.mp3"></audio>
+  <audio id="hover-evil" src="sounds/hover-evil.mp3" loop></audio>
+  <audio id="hover-sleep" src="sounds/hover-sleep.mp3" loop></audio>
+  <audio id="hover-picnic" src="sounds/hover-picnic.mp3" loop></audio>
+
+  <!-- Homepage -->
+  <div id="home" data-bg="#93ad6d">
+    <header>Memories for you ~ 
+    <a href="https://youtu.be/UarLhOQddKs?si=Y7R-TpFjzUaYp0nc" class="emoji-link">💙</a>
+    </header>
+    <div class="grid">
+      <a class="collage" href="#evil" onclick="playClickSound()" 
+         onmouseenter="fadeInSound('hover-evil')" onmouseleave="fadeOutSound('hover-evil')">
+        <div class="scrapbook">
+          <img src="images/evil1.jpg" class="photo photo1">
+          <img src="images/gang1.jpg" class="photo photo2">
+          <img src="images/gang2.jpg" class="photo photo3">
+        </div>
+        <div class="collage-title">Evil Gang😈😈😈</div>
+      </a>
+      <a class="collage" href="#sleep" onclick="playClickSound()" 
+         onmouseenter="fadeInSound('hover-sleep')" onmouseleave="fadeOutSound('hover-sleep')">
+        <div class="scrapbook">
+          <img src="images/sleep1.jpg" class="photo photo1">
+          <img src="images/over2.jpg" class="photo photo2">
+          <img src="images/over3.jpg" class="photo photo3">
+        </div>
+        <div class="collage-title">Sleepoverzz😴😴😴</div>
+      </a>
+      <a class="collage" href="#picnic" onclick="playClickSound()" 
+         onmouseenter="fadeInSound('hover-picnic')" onmouseleave="fadeOutSound('hover-picnic')">
+        <div class="scrapbook">
+          <img src="images/picnic1.jpg" class="photo photo1">
+          <img src="images/pic2.jpg" class="photo photo2">
+          <img src="images/pic3.jpg" class="photo photo3">
+        </div>
+        <div class="collage-title">Picnic🌿🍓🧺👒</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Evil Gang Gallery -->
+  <div id="evil" data-bg="#f2d6d6" style="display:none;">
+    <header>The Evilicous Fellas 😈</header>
+    <div class="scrapbook-gallery">
+      <img src="images/gang1.jpg" class="photo photo-g1" onclick="openLightbox(this)">
+      <img src="images/gang2.jpg" class="photo photo-g2" onclick="openLightbox(this)">
+      <img src="images/gang3.jpg" class="photo photo-g3" onclick="openLightbox(this)">
+      <img src="images/gang4.jpg" class="photo photo-g4" onclick="openLightbox(this)">
+      <img src="images/gang5.jpg" class="photo photo-g5" onclick="openLightbox(this)">
+      <img src="images/gang6.jpg" class="photo photo-g6" onclick="openLightbox(this)">
+      <img src="images/gang7.jpg" class="photo photo-g7" onclick="openLightbox(this)">
+      <img src="images/gang8.jpg" class="photo photo-g8" onclick="openLightbox(this)">
+      <img src="images/gang9.jpg" class="photo photo-g9" onclick="openLightbox(this)">
+      <img src="images/gang10.jpg" class="photo photo-g10" onclick="openLightbox(this)">
+      <img src="images/gang11.jpg" class="photo photo-g11" onclick="openLightbox(this)">
+      <img src="images/gang12.jpg" class="photo photo-g12" onclick="openLightbox(this)">
+      <img src="images/gang13.jpg" class="photo photo-g13" onclick="openLightbox(this)">
+      <img src="images/gang14.jpg" class="photo photo-g14" onclick="openLightbox(this)">
+      <img src="images/gang15.jpg" class="photo photo-g15" onclick="openLightbox(this)">
+      <img src="images/gang16.jpg" class="photo photo-g16" onclick="openLightbox(this)">
+      <img src="images/gang17.jpg" class="photo photo-g17" onclick="openLightbox(this)">
+      <img src="images/gang18.jpg" class="photo photo-g18" onclick="openLightbox(this)">
+      <img src="images/gang19.jpg" class="photo photo-g19" onclick="openLightbox(this)">
+    </div>
+    <a href="#home" class="back-link" onclick="playClickSound()">⬅ Back to Home</a>
+  </div>
+
+  <!-- Sleepoverzz Gallery -->
+  <div id="sleep" data-bg="#d6eaf2" style="display:none;">
+    <header>The Sleepover Fellas 😴</header>
+    <div class="scrapbook-gallery">
+      <img src="images/over1.jpg" class="photo photo-g1" onclick="openLightbox(this)">
+      <img src="images/over2.jpg" class="photo photo-g2" onclick="openLightbox(this)">
+      <img src="images/over3.jpg" class="photo photo-g3" onclick="openLightbox(this)">
+      <img src="images/over4.jpg" class="photo photo-g4" onclick="openLightbox(this)">
+      <img src="images/over5.jpg" class="photo photo-g5" onclick="openLightbox(this)">
+      <img src="images/over6.jpg" class="photo photo-g6" onclick="openLightbox(this)">
+      <img src="images/over7.jpg" class="photo photo-g7" onclick="openLightbox(this)">
+      <img src="images/over8.jpg" class="photo photo-g8" onclick="openLightbox(this)">
+      <img src="images/over9.jpg" class="photo photo-g9" onclick="openLightbox(this)">
+      <img src="images/over10.jpg" class="photo photo-g10" onclick="openLightbox(this)">
+      <img src="images/over11.jpg" class="photo photo-g11" onclick="openLightbox(this)">
+      <img src="images/over12.jpg" class="photo photo-g12" onclick="openLightbox(this)">
+      <img src="images/over13.jpg" class="photo photo-g13" onclick="openLightbox(this)">
+      <img src="images/over14.jpg" class="photo photo-g14" onclick="openLightbox(this)">
+      <img src="images/over15.jpg" class="photo photo-g15" onclick="openLightbox(this)">
+      <img src="images/over16.jpg" class="photo photo-g16" onclick="openLightbox(this)">
+      <img src="images/over17.jpg" class="photo photo-g17" onclick="openLightbox(this)">
+      <img src="images/over18.jpg" class="photo photo-g18" onclick="openLightbox(this)">
+      <img src="images/over19.jpg" class="photo photo-g19" onclick="openLightbox(this)">
+    </div>
+    <a href="#home" class="back-link" onclick="playClickSound()">⬅ Back to Home</a>
+  </div>
+
+  <!-- Picnic Gallery -->
+  <div id="picnic" data-bg="#f2f2d6" style="display:none;">
+    <header>The Picnic Fellas 🧺</header>
+    <div class="scrapbook-gallery">
+      <img src="images/pic1.jpg" class="photo photo-g1" onclick="openLightbox(this)">
+      <img src="images/pic2.jpg" class="photo photo-g2" onclick="openLightbox(this)">
+      <img src="images/pic3.jpg" class="photo photo-g3" onclick="openLightbox(this)">
+      <img src="images/pic4.jpg" class="photo photo-g4" onclick="openLightbox(this)">
+      <img src="images/pic5.jpg" class="photo photo-g5" onclick="openLightbox(this)">
+      <img src="images/pic6.jpg" class="photo photo-g6" onclick="openLightbox(this)">
+      <img src="images/pic7.jpg" class="photo photo-g7" onclick="openLightbox(this)">
+      <img src="images/pic8.jpg" class="photo photo-g8" onclick="openLightbox(this)">
+      <img src="images/pic9.jpg" class="photo photo-g9" onclick="openLightbox(this)">
+      <img src="images/pic10.jpg" class="photo photo-g10" onclick="openLightbox(this)">
+      <img src="images/pic11.jpg" class="photo photo-g11" onclick="openLightbox(this)">
+      <img src="images/pic12.jpg" class="photo photo-g12" onclick="openLightbox(this)">
+      <img src="images/pic13.jpg" class="photo photo-g13" onclick="openLightbox(this)">
+      <img src="images/pic14.jpg" class="photo photo-g14" onclick="openLightbox(this)">
+      <img src="images/pic15.jpg" class="photo photo-g15" onclick="openLightbox(this)">
+      <img src="images/pic16.jpg" class="photo photo-g16" onclick="openLightbox(this)">
+      <img src="images/pic17.jpg" class="photo photo-g17" onclick="openLightbox(this)">
+      <img src="images/pic18.jpg" class="photo photo-g18" onclick="openLightbox(this)">
+      <img src="images/pic19.jpg" class="photo photo-g19" onclick="openLightbox(this)">
+    </div>
+    <a href="#home" class="back-link" onclick="playClickSound()">⬅ Back to Home</a>
+  </div>
+
+  <!-- Lightbox container -->
+  <div id="lightbox" class="lightbox">
+    <a href="#" class="lightbox-close">&times;</a>
+    <img id="lightbox-img" src="" alt="expanded view">
+  </div>
+
+  <script>
+    function showSection(id) {
+      document.querySelectorAll('body > div').forEach(div => div.style.display = 'none');
+      const section = document.querySelector(id);
+      section.style.display = 'block';
+      document.body.style.background = section.getAttribute('data-bg');
+    }
+
+    function playClickSound() {
+      const sound = document.getElementById('click-sound');
+      sound.currentTime = 0;
+      sound.play();
+    }
+
+    // Hover sound fade in/out
+    function fadeInSound(id) {
+      const sound = document.getElementById(id);
+      sound.volume = 0;
+      sound.currentTime = 0;
+      sound.play();
+      let vol = 0;
+      const fade = setInterval(() => {
+        if (vol < 1) {
+          vol += 0.05;
+          sound.volume = vol;
+        } else {
+          clearInterval(fade);
+        }
+      }, 50);
+    }
+
+    function fadeOutSound(id) {
+      const sound = document.getElementById(id);
+      let vol = sound.volume;
+      const fade = setInterval(() => {
+        if (vol > 0) {
+          vol -= 0.05;
+          sound.volume = vol;
+        } else {
+          clearInterval(fade);
+          sound.pause();
+        }
+      }, 50);
+    }
+
+    // Lightbox functionality
+    function openLightbox(img) {
+      const lightbox = document.getElementById('lightbox');
+      const lightboxImg = document.getElementById('lightbox-img');
+      lightboxImg.src = img.src;
+      lightbox.style.display = 'flex';
+    }
+
+    document.querySelector('.lightbox-close').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('lightbox').style.display = 'none';
+    });
+
+    window.addEventListener('hashchange', () => {
+      if(location.hash) {
+        showSection(location.hash);
+      } else {
+        showSection('#home');
+      }
+    });
+
+    if(location.hash) {
+      showSection(location.hash);
+    } else {
+      showSection('#home');
+    }
+  </script>
+</body>
+</html>
